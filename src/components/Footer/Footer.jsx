@@ -1,21 +1,18 @@
 import "./Footer.css";
 import {
   BrainCircuit,
-  Github,
-  Linkedin,
+  GithubIcon,
+  LinkedinIcon,
   Mail,
-  Twitter,
-  ArrowRight
+  TwitterIcon,
+  ArrowRight,
 } from "lucide-react";
 
 function Footer() {
   return (
     <footer className="footer" id="contact">
-
       <div className="footer-container">
-
         <div className="footer-about">
-
           <div className="footer-logo">
             <BrainCircuit size={36} />
             <span>AI Resume Analyzer</span>
@@ -29,57 +26,43 @@ function Footer() {
           </p>
 
           <div className="social-icons">
-
             <a href="#">
-              <Github size={22}/>
+              <GithubIcon size={22} />
             </a>
 
             <a href="#">
-              <Linkedin size={22}/>
+              <LinkedinIcon size={22} />
             </a>
 
             <a href="#">
-              <Twitter size={22}/>
+              <TwitterIcon size={22} />
             </a>
 
             <a href="mailto:your@email.com">
-              <Mail size={22}/>
+              <Mail size={22} />
             </a>
-
           </div>
-
         </div>
 
         <div className="footer-links">
-
           <h3>Quick Links</h3>
 
           <a href="#home">Home</a>
-
           <a href="#features">Features</a>
-
           <a href="#how">How It Works</a>
-
           <a href="#faq">FAQ</a>
-
         </div>
 
         <div className="footer-links">
-
           <h3>Resources</h3>
 
           <a href="#">Documentation</a>
-
           <a href="#">Privacy Policy</a>
-
           <a href="#">Terms & Conditions</a>
-
           <a href="#">Support</a>
-
         </div>
 
         <div className="newsletter">
-
           <h3>Stay Updated</h3>
 
           <p>
@@ -87,30 +70,21 @@ function Footer() {
           </p>
 
           <div className="newsletter-box">
-
             <input
               type="email"
               placeholder="Enter your email"
             />
 
             <button>
-
-              <ArrowRight size={20}/>
-
+              <ArrowRight size={20} />
             </button>
-
           </div>
-
         </div>
-
       </div>
 
       <div className="copyright">
-
         © 2026 AI Resume Analyzer. All Rights Reserved.
-
       </div>
-
     </footer>
   );
 }
