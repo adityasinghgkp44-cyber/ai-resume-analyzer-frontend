@@ -1,5 +1,5 @@
 import "./StatCard.css";
-
+import CountUp from "react-countup";
 function StatCard({ title, value, icon, color }) {
   return (
     <div
