@@ -1,19 +1,37 @@
 import "./Upload.css";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { UploadCloud, FileText } from "lucide-react";
 import { toast } from "react-hot-toast";
 
 import DashboardLayout from "../../layouts/DashboardLayout";
-import { uploadResume } from "../../services/resumeService";
+import {
+  uploadResume,
+  getJobRoles,
+} from "../../services/resumeService";
 
 function Upload() {
   const navigate = useNavigate();
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [role, setRole] = useState("");
+  const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetchJobRoles();
+  }, []);
+
+  const fetchJobRoles = async () => {
+    try {
+      const data = await getJobRoles();
+      setRoles(data);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to load job roles.");
+    }
+  };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -67,10 +85,12 @@ function Upload() {
   return (
     <DashboardLayout>
       <div className="upload-page">
-
         <div className="upload-card">
 
-          <UploadCloud size={80} className="upload-icon" />
+          <UploadCloud
+            size={80}
+            className="upload-icon"
+          />
 
           <h1>Upload Your Resume</h1>
 
@@ -80,7 +100,12 @@ function Upload() {
             preparation.
           </p>
 
-          <div style={{ width: "100%", marginBottom: "20px" }}>
+          <div
+            style={{
+              width: "100%",
+              marginBottom: "20px",
+            }}
+          >
             <select
               value={role}
               onChange={(e) => setRole(e.target.value)}
@@ -92,12 +117,15 @@ function Upload() {
               }}
             >
               <option value="">Select Job Role</option>
-              <option value="Backend Developer">Backend Developer</option>
-              <option value="Frontend Developer">Frontend Developer</option>
-              <option value="Full Stack Developer">Full Stack Developer</option>
-              <option value="Data Analyst">Data Analyst</option>
-              <option value="AI Engineer">AI Engineer</option>
-              <option value="Cyber Security">Cyber Security</option>
+
+              {roles.map((jobRole) => (
+                <option
+                  key={jobRole}
+                  value={jobRole}
+                >
+                  {jobRole}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -135,3 +163,15 @@ function Upload() {
 }
 
 export default Upload;
+const fetchJobRoles = async () => {
+  try {
+    const data = await getJobRoles();
+
+    console.log("Roles:", data);
+
+    setRoles(data);
+  } catch (error) {
+    console.error(error);
+    toast.error("Failed to load job roles.");
+  }
+};

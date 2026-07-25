@@ -26,3 +26,7 @@ export const deleteResume = async (resumeName) => {
 
   return response.data;
 };
+export const getJobRoles = async () => {
+  const response = await API.get("/job-roles");
+  return response.data.roles;
+};
