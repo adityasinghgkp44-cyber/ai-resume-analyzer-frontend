@@ -2,6 +2,7 @@ import "./Upload.css";
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Select from "react-select";
 import { UploadCloud, FileText } from "lucide-react";
 import { toast } from "react-hot-toast";
 
@@ -26,7 +27,13 @@ function Upload() {
   const fetchJobRoles = async () => {
     try {
       const data = await getJobRoles();
-      setRoles(data);
+
+      const formattedRoles = data.map((item) => ({
+        value: item,
+        label: item,
+      }));
+
+      setRoles(formattedRoles);
     } catch (error) {
       console.error(error);
       toast.error("Failed to load job roles.");
@@ -65,7 +72,10 @@ function Upload() {
     try {
       setLoading(true);
 
-      const response = await uploadResume(selectedFile, role);
+      const response = await uploadResume(
+        selectedFile,
+        role
+      );
 
       toast.success("Resume analyzed successfully.");
 
@@ -95,9 +105,9 @@ function Upload() {
           <h1>Upload Your Resume</h1>
 
           <p>
-            Upload your resume and select your target job role to
-            receive ATS score, skill analysis, roadmap and interview
-            preparation.
+            Upload your resume and select your target job role
+            to receive ATS score, skill analysis, roadmap and
+            interview preparation.
           </p>
 
           <div
@@ -106,35 +116,60 @@ function Upload() {
               marginBottom: "20px",
             }}
           >
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "12px",
-                borderRadius: "10px",
-                fontSize: "16px",
+            <Select
+              options={roles}
+              placeholder="Search or Select Job Role..."
+              value={roles.find(
+                (item) => item.value === role
+              )}
+              onChange={(selected) =>
+                setRole(selected ? selected.value : "")
+              }
+              isSearchable
+              isClearable
+              styles={{
+                control: (base) => ({
+                  ...base,
+                  backgroundColor: "#1c1c1c",
+                  borderColor: "#444",
+                  borderRadius: "10px",
+                  minHeight: "50px",
+                  color: "#fff",
+                }),
+                menu: (base) => ({
+                  ...base,
+                  backgroundColor: "#1c1c1c",
+                }),
+                option: (base, state) => ({
+                  ...base,
+                  backgroundColor: state.isFocused
+                    ? "#ff6a00"
+                    : "#1c1c1c",
+                  color: "#fff",
+                  cursor: "pointer",
+                }),
+                singleValue: (base) => ({
+                  ...base,
+                  color: "#fff",
+                }),
+                input: (base) => ({
+                  ...base,
+                  color: "#fff",
+                }),
+                placeholder: (base) => ({
+                  ...base,
+                  color: "#aaa",
+                }),
               }}
-            >
-              <option value="">Select Job Role</option>
-
-              {roles.map((jobRole) => (
-                <option
-                  key={jobRole}
-                  value={jobRole}
-                >
-                  {jobRole}
-                </option>
-              ))}
-            </select>
+            />
           </div>
 
           <label className="upload-box">
             <input
               type="file"
               accept=".pdf,.docx"
-              onChange={handleFileChange}
               hidden
+              onChange={handleFileChange}
             />
 
             <FileText size={45} />
@@ -161,17 +196,5 @@ function Upload() {
     </DashboardLayout>
   );
 }
-const fetchJobRoles = async () => {
-  try {
-    const data = await getJobRoles();
 
-    console.log("Roles from API:", data);
-    console.log("Total Roles:", data.length);
-
-    setRoles(data);
-  } catch (error) {
-    console.error(error);
-    toast.error("Failed to load job roles.");
-  }
-};
 export default Upload;
