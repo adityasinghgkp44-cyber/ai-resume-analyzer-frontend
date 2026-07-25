@@ -4,7 +4,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout";
 
 function Analysis() {
-
   const { state } = useLocation();
   const navigate = useNavigate();
 
@@ -27,78 +26,159 @@ function Analysis() {
 
   return (
     <DashboardLayout>
-
       <div className="analysis-page">
 
         <h1>Resume Analysis</h1>
 
-        <h2>ATS Score</h2>
-        <h3>{state.ats_score}%</h3>
+        <div className="ats-card">
+          <h2>ATS Score</h2>
 
-        <hr />
+          <div className="ats-score">
+            {state.ats_score}%
+          </div>
+        </div>
 
-        <h2>Matched Skills</h2>
+        <div className="analysis-grid">
 
-        <ul>
-          {state.matched_skills?.map((skill, index) => (
-            <li key={index}>{skill}</li>
-          ))}
-        </ul>
+          <div className="analysis-card">
 
-        <h2>Missing Skills</h2>
+            <h2>Matched Skills</h2>
 
-        <ul>
-          {state.missing_skills?.map((skill, index) => (
-            <li key={index}>{skill}</li>
-          ))}
-        </ul>
+            <div className="skills">
+              {state.matched_skills?.map((skill, index) => (
+                <span
+                  className="skill matched"
+                  key={index}
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
 
-        <h2>Strengths</h2>
+          </div>
 
-        <ul>
-          {state.analysis?.strengths?.map((item, index) => (
-            <li key={index}>{item}</li>
-          ))}
-        </ul>
+          <div className="analysis-card">
 
-        <h2>Weaknesses</h2>
+            <h2>Missing Skills</h2>
 
-        <ul>
-          {state.analysis?.weaknesses?.map((item, index) => (
-            <li key={index}>{item}</li>
-          ))}
-        </ul>
+            <div className="skills">
+              {state.missing_skills?.map((skill, index) => (
+                <span
+                  className="skill missing"
+                  key={index}
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
 
-        <h2>Suggestions</h2>
+          </div>
 
-        <ul>
-          {state.analysis?.suggestions?.map((item, index) => (
-            <li key={index}>{item}</li>
-          ))}
-        </ul>
+        </div>
 
-        <h2>Interview Questions</h2>
+        <div className="analysis-card">
+          <h2>Strengths</h2>
 
-        <ul>
-          {state.analysis?.interview_questions?.map((item, index) => (
-            <li key={index}>{item}</li>
-          ))}
-        </ul>
+          <ul>
+            {state.analysis?.strengths?.map((item, index) => (
+              <li key={index}>{item}</li>
+            ))}
+          </ul>
+        </div>
 
-        <h2>Roadmap</h2>
+        <div className="analysis-card">
+          <h2>Weaknesses</h2>
 
-        <ul>
+          <ul>
+            {state.analysis?.weaknesses?.map((item, index) => (
+              <li key={index}>{item}</li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="analysis-card">
+          <h2>Suggestions</h2>
+
+          <ul>
+            {state.analysis?.suggestions?.map((item, index) => (
+              <li key={index}>{item}</li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="analysis-card">
+          <h2>Interview Questions</h2>
+
+          <ol>
+            {state.analysis?.interview_questions?.map((item, index) => (
+              <li key={index}>{item}</li>
+            ))}
+          </ol>
+        </div>
+
+        <h2 className="roadmap-title">
+          Learning Roadmap
+        </h2>
+
+        <div className="roadmap-container">
+
           {state.roadmap?.map((item, index) => (
-            <li key={index}>
-              {typeof item === "string"
-                ? item
-                : JSON.stringify(item)}
-            </li>
+
+            <div
+              className="roadmap-card"
+              key={index}
+            >
+
+              <h3>{item.skill}</h3>
+
+              {["beginner","intermediate","advanced"].map(level=>(
+
+                <div
+                  className="roadmap-level"
+                  key={level}
+                >
+
+                  <h4>
+                    {level.charAt(0).toUpperCase()+level.slice(1)}
+                    {" "}
+                    ({item[level].days} Days)
+                  </h4>
+
+                  <strong>Topics</strong>
+
+                  <ul>
+                    {item[level].topics?.map((topic,i)=>(
+                      <li key={i}>{topic}</li>
+                    ))}
+                  </ul>
+
+                  {item[level].courses && (
+                    <>
+                      <strong>Courses</strong>
+
+                      <ul>
+                        {item[level].courses.map((course,i)=>(
+                          <li key={i}>{course}</li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+
+                  <strong>Project</strong>
+
+                  <p>{item[level].project}</p>
+
+                </div>
+
+              ))}
+
+            </div>
+
           ))}
-        </ul>
+
+        </div>
 
       </div>
-
     </DashboardLayout>
   );
 }
