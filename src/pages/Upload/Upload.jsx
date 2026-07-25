@@ -161,13 +161,12 @@ function Upload() {
     </DashboardLayout>
   );
 }
-
-export default Upload;
 const fetchJobRoles = async () => {
   try {
     const data = await getJobRoles();
 
-    console.log("Roles:", data);
+    console.log("Roles from API:", data);
+    console.log("Total Roles:", data.length);
 
     setRoles(data);
   } catch (error) {
@@ -175,3 +174,4 @@ const fetchJobRoles = async () => {
     toast.error("Failed to load job roles.");
   }
 };
+export default Upload;
