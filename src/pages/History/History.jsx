@@ -30,7 +30,7 @@ function History() {
   const [filter, setFilter] = useState("all");
 
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedResume, setSelectedResume] = useState(null);
+  const [selectedResume, setSelectedResume] = useState([]);
 
   useEffect(() => {
     fetchHistory();
@@ -49,6 +49,21 @@ function History() {
       setLoading(false);
     }
   };
+  const toggleSelect = (id) => {
+  setSelectedResumes((prev) =>
+    prev.includes(id)
+      ? prev.filter((item) => item !== id)
+      : [...prev, id]
+  );
+};
+
+const selectAll = () => {
+  if (selectedResumes.length === filteredHistory.length) {
+    setSelectedResumes([]);
+  } else {
+    setSelectedResumes(filteredHistory.map((item) => item._id));
+  }
+};
 
   const handleDelete = async () => {
     if (!selectedResume) return;
@@ -151,7 +166,24 @@ function History() {
           </select>
 
         </div>
+  <div className="history-toolbar">
 
+     <label className="select-all">
+
+      <input
+       type="checkbox"
+       checked={
+         filteredHistory.length > 0 &&
+         selectedResumes.length === filteredHistory.length
+       }
+         onChange={selectAll}
+     />
+
+     Select All
+
+   </label>
+
+  </div>
         {filteredHistory.length === 0 ? (
           <div className="empty-history">
             <FileText size={80} />
@@ -165,7 +197,15 @@ function History() {
               <div
                 className="history-card"
                 key={index}
-              >
+              ><div className="history-checkbox">
+
+        <input
+            type="checkbox"
+              checked={selectedResumes.includes(resume._id)}
+              onChange={() => toggleSelect(resume._id)}
+               />
+
+           </div>
 
                 <div className="history-header">
                   <FileText />
