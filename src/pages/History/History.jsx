@@ -1,5 +1,4 @@
 import "./History.css";
-
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
@@ -11,6 +10,7 @@ import {
   Eye,
   Trash2,
   Search,
+  Download,
 } from "lucide-react";
 
 import DashboardLayout from "../../layouts/DashboardLayout";
@@ -21,7 +21,6 @@ import { getHistory } from "../../services/historyService";
 import { deleteResume } from "../../services/resumeService";
 
 function History() {
-
   const navigate = useNavigate();
 
   const [history, setHistory] = useState([]);
@@ -54,7 +53,6 @@ function History() {
   };
 
   const filteredHistory = useMemo(() => {
-
     let data = [...history];
 
     data = data.filter((resume) =>
@@ -64,7 +62,9 @@ function History() {
     );
 
     if (filter === "high") {
-      data = data.filter((resume) => resume.ats_score >= 80);
+      data = data.filter(
+        (resume) => resume.ats_score >= 80
+      );
     }
 
     if (filter === "medium") {
@@ -82,89 +82,82 @@ function History() {
     }
 
     return data;
-
   }, [history, search, filter]);
 
   const toggleSelect = (_id) => {
-
     setSelectedResumes((prev) =>
       prev.includes(_id)
         ? prev.filter((id) => id !== _id)
         : [...prev, _id]
     );
-
   };
 
   const selectAll = () => {
-
-    if (selectedResumes.length === filteredHistory.length) {
+    if (
+      selectedResumes.length ===
+      filteredHistory.length
+    ) {
       setSelectedResumes([]);
     } else {
       setSelectedResumes(
-        filteredHistory.map((item) => item._id)
+        filteredHistory.map(
+          (item) => item._id
+        )
       );
     }
-
   };
 
   const handleDelete = async () => {
-
     if (!selectedResume) return;
 
     try {
-
       await deleteResume(selectedResume._id);
 
       setHistory((prev) =>
         prev.filter(
-          (item) => item._id !== selectedResume._id
+          (item) =>
+            item._id !== selectedResume._id
         )
       );
 
-      toast.success("Resume deleted successfully");
-
+      toast.success(
+        "Resume deleted successfully"
+      );
     } catch (error) {
-
       toast.error(
         error.response?.data?.error ||
           "Delete failed"
       );
-
     }
 
     setOpenDialog(false);
     setSelectedResume(null);
-
   };
 
   const deleteSelected = async () => {
-
     try {
-
       for (const id of selectedResumes) {
         await deleteResume(id);
       }
 
       setHistory((prev) =>
         prev.filter(
-          (item) => !selectedResumes.includes(item._id)
+          (item) =>
+            !selectedResumes.includes(item._id)
         )
       );
 
       setSelectedResumes([]);
 
-      toast.success("Selected resumes deleted");
-
+      toast.success(
+        "Selected resumes deleted"
+      );
     } catch {
-
       toast.error("Delete failed");
-
     }
-
   };
 
   if (loading) {
-
     return (
       <DashboardLayout>
         <Loading
@@ -173,7 +166,6 @@ function History() {
         />
       </DashboardLayout>
     );
-
   }
     return (
     <DashboardLayout>
@@ -207,9 +199,7 @@ function History() {
         </div>
 
         <div className="history-toolbar">
-
           <label className="select-all">
-
             <input
               type="checkbox"
               checked={
@@ -218,29 +208,15 @@ function History() {
               }
               onChange={selectAll}
             />
-
             Select All
-
           </label>
-
-          <button
-            className="delete-selected-btn"
-            disabled={selectedResumes.length === 0}
-            onClick={deleteSelected}
-          >
-            Delete Selected ({selectedResumes.length})
-          </button>
-
         </div>
 
         {filteredHistory.length === 0 ? (
 
           <div className="empty-history">
-
             <FileText size={80} />
-
             <h2>No Resume Found</h2>
-
           </div>
 
         ) : (
@@ -255,63 +231,39 @@ function History() {
               >
 
                 <div className="history-checkbox">
-
                   <input
                     type="checkbox"
                     checked={selectedResumes.includes(resume._id)}
                     onChange={() => toggleSelect(resume._id)}
                   />
-
                 </div>
 
                 <div className="history-header">
-
                   <FileText />
-
                   <h2>{resume.resume_name}</h2>
-
                 </div>
 
                 <div className="history-score">
-
                   <Star />
-
                   ATS Score
-
                   <span>{resume.ats_score}%</span>
-
                 </div>
 
                 <div className="history-skills">
-
                   {resume.matched_skills?.map((skill, i) => (
-
-                    <span key={i}>
-                      {skill}
-                    </span>
-
+                    <span key={i}>{skill}</span>
                   ))}
-
                 </div>
 
                 <div className="analysis-preview">
-
                   <BrainCircuit size={18} />
-
                   <p>
                     {resume.analysis?.suggestions?.[0] ||
                       "No suggestions available"}
                   </p>
-
                 </div>
 
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "12px",
-                    marginTop: "20px",
-                  }}
-                >
+                <div className="history-actions">
 
                   <button
                     className="view-btn"
@@ -323,6 +275,14 @@ function History() {
                   >
                     <Eye size={18} />
                     View Report
+                  </button>
+
+                  <button
+                    className="download-btn"
+                    onClick={() => window.print()}
+                  >
+                    <Download size={18} />
+                    Download
                   </button>
 
                   <button
@@ -358,6 +318,23 @@ function History() {
             setSelectedResume(null);
           }}
         />
+
+        {selectedResumes.length > 0 && (
+          <div className="bulk-action-bar">
+
+            <span>
+              {selectedResumes.length} Resume Selected
+            </span>
+
+            <button
+              className="delete-selected-btn"
+              onClick={deleteSelected}
+            >
+              Delete Selected
+            </button>
+
+          </div>
+        )}
 
       </div>
     </DashboardLayout>
