@@ -19,9 +19,9 @@ export const uploadResume = async (file, role) => {
   return response.data;
 };
 
-export const deleteResume = async (resumeName) => {
+export const deleteResume = async (resumeId) => {
   const response = await API.delete(
-    `/resume/${encodeURIComponent(resumeName)}`
+    `/resume/${encodeURIComponent(resumeId)}`
   );
 
   return response.data;

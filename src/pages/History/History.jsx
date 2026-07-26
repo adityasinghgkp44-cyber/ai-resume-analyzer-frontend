@@ -54,12 +54,12 @@ function History() {
     if (!selectedResume) return;
 
     try {
-      await deleteResume(selectedResume.resume_name);
+      await deleteResume(selectedResume._id);
 
       setHistory((prev) =>
         prev.filter(
           (item) =>
-            item.resume_name !== selectedResume.resume_name
+            item._id !== selectedResume._id
         )
       );
 
