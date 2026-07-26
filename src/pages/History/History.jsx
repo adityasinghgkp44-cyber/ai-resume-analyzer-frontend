@@ -21,6 +21,7 @@ import { getHistory } from "../../services/historyService";
 import { deleteResume } from "../../services/resumeService";
 
 function History() {
+
   const navigate = useNavigate();
 
   const [history, setHistory] = useState([]);
@@ -29,8 +30,10 @@ function History() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
 
+  const [selectedResume, setSelectedResume] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedResume, setSelectedResume] = useState([]);
+
+  const [selectedResumes, setSelectedResumes] = useState([]);
 
   useEffect(() => {
     fetchHistory();
@@ -43,54 +46,15 @@ function History() {
     } catch (error) {
       toast.error(
         error.response?.data?.error ||
-        "Failed to load history"
+          "Failed to load history"
       );
     } finally {
       setLoading(false);
     }
   };
-  const toggleSelect = (id) => {
-  setSelectedResumes((prev) =>
-    prev.includes(id)
-      ? prev.filter((item) => item !== id)
-      : [...prev, id]
-  );
-};
-
-const selectAll = () => {
-  if (selectedResumes.length === filteredHistory.length) {
-    setSelectedResumes([]);
-  } else {
-    setSelectedResumes(filteredHistory.map((item) => item._id));
-  }
-};
-
-  const handleDelete = async () => {
-    if (!selectedResume) return;
-
-    try {
-      await deleteResume(selectedResume._id);
-
-      setHistory((prev) =>
-        prev.filter(
-          (item) =>
-            item._id !== selectedResume._id
-        )
-      );
-
-      toast.success("Resume deleted successfully");
-    } catch (error) {
-      toast.error(
-        error.response?.data?.error ||
-        "Delete failed"
-      );
-    }
-
-    setOpenDialog(false);
-    setSelectedResume(null);
-  };
 
   const filteredHistory = useMemo(() => {
+
     let data = [...history];
 
     data = data.filter((resume) =>
@@ -100,9 +64,7 @@ const selectAll = () => {
     );
 
     if (filter === "high") {
-      data = data.filter(
-        (resume) => resume.ats_score >= 80
-      );
+      data = data.filter((resume) => resume.ats_score >= 80);
     }
 
     if (filter === "medium") {
@@ -120,9 +82,89 @@ const selectAll = () => {
     }
 
     return data;
+
   }, [history, search, filter]);
 
+  const toggleSelect = (_id) => {
+
+    setSelectedResumes((prev) =>
+      prev.includes(_id)
+        ? prev.filter((id) => id !== _id)
+        : [...prev, _id]
+    );
+
+  };
+
+  const selectAll = () => {
+
+    if (selectedResumes.length === filteredHistory.length) {
+      setSelectedResumes([]);
+    } else {
+      setSelectedResumes(
+        filteredHistory.map((item) => item._id)
+      );
+    }
+
+  };
+
+  const handleDelete = async () => {
+
+    if (!selectedResume) return;
+
+    try {
+
+      await deleteResume(selectedResume._id);
+
+      setHistory((prev) =>
+        prev.filter(
+          (item) => item._id !== selectedResume._id
+        )
+      );
+
+      toast.success("Resume deleted successfully");
+
+    } catch (error) {
+
+      toast.error(
+        error.response?.data?.error ||
+          "Delete failed"
+      );
+
+    }
+
+    setOpenDialog(false);
+    setSelectedResume(null);
+
+  };
+
+  const deleteSelected = async () => {
+
+    try {
+
+      for (const id of selectedResumes) {
+        await deleteResume(id);
+      }
+
+      setHistory((prev) =>
+        prev.filter(
+          (item) => !selectedResumes.includes(item._id)
+        )
+      );
+
+      setSelectedResumes([]);
+
+      toast.success("Selected resumes deleted");
+
+    } catch {
+
+      toast.error("Delete failed");
+
+    }
+
+  };
+
   if (loading) {
+
     return (
       <DashboardLayout>
         <Loading
@@ -131,9 +173,9 @@ const selectAll = () => {
         />
       </DashboardLayout>
     );
-  }
 
-  return (
+  }
+    return (
     <DashboardLayout>
       <div className="history-page">
 
@@ -143,21 +185,18 @@ const selectAll = () => {
 
           <div className="search-box">
             <Search size={18} />
+
             <input
               type="text"
               placeholder="Search Resume..."
               value={search}
-              onChange={(e) =>
-                setSearch(e.target.value)
-              }
+              onChange={(e) => setSearch(e.target.value)}
             />
           </div>
 
           <select
             value={filter}
-            onChange={(e) =>
-              setFilter(e.target.value)
-            }
+            onChange={(e) => setFilter(e.target.value)}
           >
             <option value="all">All Scores</option>
             <option value="high">ATS ≥ 80</option>
@@ -166,67 +205,92 @@ const selectAll = () => {
           </select>
 
         </div>
-  <div className="history-toolbar">
 
-     <label className="select-all">
+        <div className="history-toolbar">
 
-      <input
-       type="checkbox"
-       checked={
-         filteredHistory.length > 0 &&
-         selectedResumes.length === filteredHistory.length
-       }
-         onChange={selectAll}
-     />
+          <label className="select-all">
 
-     Select All
+            <input
+              type="checkbox"
+              checked={
+                filteredHistory.length > 0 &&
+                selectedResumes.length === filteredHistory.length
+              }
+              onChange={selectAll}
+            />
 
-   </label>
+            Select All
 
-  </div>
+          </label>
+
+          <button
+            className="delete-selected-btn"
+            disabled={selectedResumes.length === 0}
+            onClick={deleteSelected}
+          >
+            Delete Selected ({selectedResumes.length})
+          </button>
+
+        </div>
+
         {filteredHistory.length === 0 ? (
+
           <div className="empty-history">
+
             <FileText size={80} />
+
             <h2>No Resume Found</h2>
+
           </div>
+
         ) : (
+
           <div className="history-grid">
 
-            {filteredHistory.map((resume, index) => (
+            {filteredHistory.map((resume) => (
 
               <div
                 className="history-card"
-                key={index}
-              ><div className="history-checkbox">
+                key={resume._id}
+              >
 
-        <input
-            type="checkbox"
-              checked={selectedResumes.includes(resume._id)}
-              onChange={() => toggleSelect(resume._id)}
-               />
+                <div className="history-checkbox">
 
-           </div>
+                  <input
+                    type="checkbox"
+                    checked={selectedResumes.includes(resume._id)}
+                    onChange={() => toggleSelect(resume._id)}
+                  />
+
+                </div>
 
                 <div className="history-header">
+
                   <FileText />
+
                   <h2>{resume.resume_name}</h2>
+
                 </div>
 
                 <div className="history-score">
+
                   <Star />
+
                   ATS Score
+
                   <span>{resume.ats_score}%</span>
+
                 </div>
 
                 <div className="history-skills">
 
-                  {resume.matched_skills?.map(
-                    (skill, i) => (
-                      <span key={i}>
-                        {skill}
-                      </span>
-                    )
-                  )}
+                  {resume.matched_skills?.map((skill, i) => (
+
+                    <span key={i}>
+                      {skill}
+                    </span>
+
+                  ))}
 
                 </div>
 
@@ -279,6 +343,7 @@ const selectAll = () => {
             ))}
 
           </div>
+
         )}
 
         <ConfirmDialog
