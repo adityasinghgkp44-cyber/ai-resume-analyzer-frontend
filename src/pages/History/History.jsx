@@ -2,7 +2,7 @@ import "./History.css";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-
+import { downloadReport } from "../../utils/downloadReport";
 import {
   FileText,
   Star,
@@ -278,12 +278,12 @@ function History() {
                   </button>
 
                   <button
-                    className="download-btn"
-                    onClick={() => window.print()}
-                  >
-                    <Download size={18} />
-                    Download
-                  </button>
+  className="download-btn"
+  onClick={() => downloadReport(resume)}
+>
+  <Download size={18} />
+  Download
+</button>
 
                   <button
                     className="delete-btn"
