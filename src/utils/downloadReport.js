@@ -1,6 +1,5 @@
-import jsPDF from "jspdf";
+import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
-
 export const downloadReport = (resume) => {
   const doc = new jsPDF();
 
@@ -62,7 +61,7 @@ export const downloadReport = (resume) => {
     }
   });
 
-  let y = doc.lastAutoTable.finalY + 12;
+let y = (doc.lastAutoTable?.finalY || 60) + 12;
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(18);
