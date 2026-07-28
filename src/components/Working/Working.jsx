@@ -1,4 +1,4 @@
-import "./HowItWorks.css";
+import "./Working.css";
 import { motion } from "framer-motion";
 import {
   Upload,
@@ -42,7 +42,7 @@ const steps = [
   }
 ];
 
-function HowItWorks() {
+function Working() {
   return (
     <section className="how-section" id="how">
 
@@ -88,4 +88,4 @@ function HowItWorks() {
   );
 }
 
-export default HowItWorks;
+export default Working;

@@ -47,15 +47,9 @@ function Stats() {
             }}
           >
             <h1>
-              {inView && (
-                <CountUp
-                  end={item.end}
-                  duration={2}
-                  separator=","
-                />
-              )}
-              {item.suffix}
-            </h1>
+  {item.end}
+  {item.suffix}
+</h1>
 
             <p>{item.title}</p>
           </motion.div>
@@ -63,6 +57,8 @@ function Stats() {
       </div>
     </section>
   );
+  
+console.log(CountUp);
 }
 
 export default Stats;
